@@ -28,6 +28,13 @@ public class GlobalExceptionHandler {
         return new CustomResponseEntity<>(1000, ex.getMessage());
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public CustomResponseEntity<Object> handleBadRequest(IllegalArgumentException ex) {
+        return CustomResponseEntity.error(ex.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody

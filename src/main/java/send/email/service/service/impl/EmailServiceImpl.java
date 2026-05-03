@@ -5,6 +5,7 @@ import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -25,10 +26,13 @@ public class EmailServiceImpl implements EmailService {
     private static final Logger logger = LoggerFactory.getLogger(EmailServiceImpl.class);
 
     private final JavaMailSender javaMailSender;
+    private final String mailFrom;
 
     @Autowired
-    public EmailServiceImpl(JavaMailSender javaMailSender) {
+    public EmailServiceImpl(JavaMailSender javaMailSender,
+                            @Value("${app.mail.from}") String mailFrom) {
         this.javaMailSender = javaMailSender;
+        this.mailFrom = mailFrom;
     }
 
     @Override
@@ -59,6 +63,7 @@ public class EmailServiceImpl implements EmailService {
             simpleMailMessage.setTo(emailDto.getTo());
             simpleMailMessage.setSubject(emailDto.getSubject());
             simpleMailMessage.setText(emailDto.getMessage());
+            simpleMailMessage.setFrom(mailFrom);
 
             javaMailSender.send(simpleMailMessage);
 
@@ -78,7 +83,7 @@ public class EmailServiceImpl implements EmailService {
             simpleMailMessage.setTo(to);
             simpleMailMessage.setSubject(subject);
             simpleMailMessage.setText(message);
-            simpleMailMessage.setFrom("bhurgrishahjahan28@gmail.com");
+            simpleMailMessage.setFrom(mailFrom);
             javaMailSender.send(simpleMailMessage);
             logger.info("Email has been sent to multiple recipients.");
             return new CustomResponseEntity<>("Email sent to multiple recipients successfully.");
@@ -97,7 +102,7 @@ public class EmailServiceImpl implements EmailService {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(htmlContent, true);
-            helper.setFrom("bhurgrishahjahan28@gmail.com");
+            helper.setFrom(mailFrom);
             javaMailSender.send(mimeMessage);
             logger.info("HTML email has been sent to {}", to);
             return new CustomResponseEntity<>("HTML email sent successfully.");
@@ -126,7 +131,7 @@ public class EmailServiceImpl implements EmailService {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(message, false);
-            helper.setFrom("bhurgrishahjahan28@gmail.com");
+            helper.setFrom(mailFrom);
 
             FileSystemResource fileResource = new FileSystemResource(file);
             helper.addAttachment(file.getName(), fileResource);

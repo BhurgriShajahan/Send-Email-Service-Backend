@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Local secrets (copy from application-local.yml.example)
+src/main/resources/application-local.yml
